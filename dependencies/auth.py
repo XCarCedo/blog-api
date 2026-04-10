@@ -3,7 +3,7 @@ import jwt
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends, HTTPException, status
 from typing import Annotated, Any
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from dependencies.settings import SettingsDep, get_settings
 from schemas.users import UserPayload
@@ -21,18 +21,19 @@ async def get_current_user(token: SchemeDep, settings: SettingsDep) -> UserPaylo
 
     try:
         payload = jwt.decode(token, settings.secret, [settings.alg])
-        return UserPayload(**payload["sub"])
+        print(f"{payload["exp"]=}, {datetime.now(timezone.utc)=}")
+        return UserPayload(**payload)
     except jwt.InvalidTokenError:
         raise credentials_exception
 
 def create_jwt_token(payload: dict[str, Any], exp_delta: timedelta | None = None) -> str:
     settings = get_settings()
     if exp_delta is None:
-        exp_delta = datetime.now() + timedelta()
+        # exp_delta = datetime.now() + timedelta(minutes=settings.access_exp_min)
+        exp_delta = datetime.now(timezone.utc) + timedelta(seconds=30)
 
     to_encode = payload.copy()
     to_encode.update({"exp":exp_delta})
-
-    return jwt.encode(payload, settings.secret, settings.alg)
+    return jwt.encode(to_encode, settings.secret, settings.alg)
 
 UserDep = Annotated[UserPayload, Depends(get_current_user)]
