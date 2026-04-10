@@ -8,10 +8,10 @@ class Settings(BaseSettings):
     alg: str
     access_exp_min: int
 
-    model_config = SettingsConfigDict(env_file="settings.env")
+    model_config = SettingsConfigDict(env_file="./settings.env")
 
 @lru_cache
 def get_settings() -> Settings:
-    return Settings
+    return Settings()
 
 SettingsDep = Annotated[Settings, Depends(get_settings)]
