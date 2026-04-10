@@ -7,6 +7,5 @@ from typing import Annotated
 def get_session():
     with Session(engine) as session:
         yield session
-    session.close()
 
 SessionDep = Annotated[Session, Depends(get_session)]
