@@ -21,7 +21,6 @@ async def get_current_user(token: SchemeDep, settings: SettingsDep) -> UserPaylo
 
     try:
         payload = jwt.decode(token, settings.secret, [settings.alg])
-        print(f"{payload["exp"]=}, {datetime.now(timezone.utc)=}")
         return UserPayload(**payload)
     except jwt.InvalidTokenError:
         raise credentials_exception
