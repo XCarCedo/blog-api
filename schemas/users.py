@@ -14,5 +14,5 @@ class UserUpdate(SQLModel):
     username: str
 
 class Token(SQLModel):
-    access_type: str
+    access_token: str
     token_type: str
