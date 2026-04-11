@@ -3,7 +3,7 @@ import jwt
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends, HTTPException, status
 from typing import Annotated, Any
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, UTC
 
 from dependencies.settings import SettingsDep, get_settings
 from schemas.users import UserPayload
@@ -37,7 +37,7 @@ async def get_current_superuser(user: UserDep):
 def create_jwt_token(payload: dict[str, Any], exp_delta: timedelta | None = None) -> str:
     settings = get_settings()
     if exp_delta is None:
-        exp_delta = datetime.now() + timedelta(minutes=settings.access_exp_min)
+        exp_delta = datetime.now(UTC) + timedelta(minutes=settings.access_exp_min)
 
     to_encode = payload.copy()
     to_encode.update({"exp":exp_delta})
