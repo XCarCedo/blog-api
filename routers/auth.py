@@ -5,8 +5,8 @@ from sqlmodel import select
 
 from hash import hash, verify
 from db.models.users import User
-from schemas.users import Token, UserSignup
-from dependencies.auth import UserDep, create_jwt_token
+from schemas.users import Token, UserSignup, UserPayload
+from dependencies.auth import UserDep, SuperUserDep, create_jwt_token
 from dependencies.database import SessionDep
 
 router = APIRouter()
@@ -19,12 +19,8 @@ async def login_for_access_token(form: Annotated[OAuth2PasswordRequestForm, Depe
     if not verify(form.password, user.password_hash):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, f"Incorrect password")
     
-    payload = {
-        "id":user.id,
-        "username":form.username
-    }
-
-    return Token(access_token=create_jwt_token(payload), token_type="bearer")
+    payload = UserPayload(**user.model_dump())
+    return Token(access_token=create_jwt_token(payload.model_dump()), token_type="bearer")
 
 @router.post("/signup")
 async def signup(user: UserSignup, session: SessionDep):
