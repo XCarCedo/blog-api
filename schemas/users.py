@@ -3,6 +3,7 @@ from sqlmodel import SQLModel
 class UserPayload(SQLModel):
     id: int
     username: str
+    superuser: bool
 
 class UserPublic(SQLModel):
     username: str
