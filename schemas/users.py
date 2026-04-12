@@ -17,4 +17,12 @@ class UserSignup(SQLModel):
 
 class Token(SQLModel):
     access_token: str
+    refresh_token: str
     token_type: str
+
+class AccessToken(SQLModel):
+    access_token: str
+    token_type: str
+
+class RefreshTokenScheme(SQLModel):
+    refresh_token: str
