@@ -1,7 +1,11 @@
-from sqlmodel import SQLModel, Field
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
-now = lambda: datetime.now(UTC)
+from sqlmodel import Field, SQLModel
+
+
+def now():
+    return datetime.now(UTC)
+
 
 class Blog(SQLModel, table=True):
     id: int = Field(primary_key=True)

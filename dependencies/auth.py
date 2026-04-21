@@ -1,9 +1,9 @@
-import jwt
-
-from fastapi.security import OAuth2PasswordBearer
-from fastapi import Depends, HTTPException, status
+from datetime import UTC, datetime, timedelta
 from typing import Annotated, Any
-from datetime import datetime, timedelta, UTC
+
+import jwt
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 
 from dependencies.settings import SettingsDep, get_settings
 from schemas.users import UserPayload
@@ -11,6 +11,7 @@ from schemas.users import UserPayload
 oauth2_scheme = OAuth2PasswordBearer("token")
 
 SchemeDep = Annotated[str, Depends(oauth2_scheme)]
+
 
 async def get_current_user(token: SchemeDep, settings: SettingsDep) -> UserPayload:
     credentials_exception = HTTPException(
@@ -25,23 +26,28 @@ async def get_current_user(token: SchemeDep, settings: SettingsDep) -> UserPaylo
     except jwt.InvalidTokenError:
         raise credentials_exception
 
+
 async def get_current_superuser(user: UserDep):
     if not user.superuser:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Only superusers/admins are allowed to access this endpoint",
         )
-    
+
     return user
 
-def create_jwt_token(payload: dict[str, Any], exp_delta: timedelta | None = None) -> str:
+
+def create_jwt_token(
+    payload: dict[str, Any], exp_delta: timedelta | None = None
+) -> str:
     settings = get_settings()
     if exp_delta is None:
         exp_delta = datetime.now(UTC) + timedelta(minutes=settings.access_exp_min)
 
     to_encode = payload.copy()
-    to_encode.update({"exp":exp_delta})
+    to_encode.update({"exp": exp_delta})
     return jwt.encode(to_encode, settings.secret, settings.alg)
+
 
 UserDep = Annotated[UserPayload, Depends(get_current_user)]
 SuperUserDep = Annotated[UserPayload, Depends(get_current_superuser)]
