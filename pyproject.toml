@@ -12,7 +12,3 @@ dependencies = [
     "pyjwt>=2.12.1",
     "sqlmodel>=0.0.38",
 ]
-
-[[tool.uv.index]]
-url = "https://package-mirror.liara.ir/repository/pypi/simple"
-default = true
