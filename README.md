@@ -11,7 +11,7 @@ This is a very simple blog CRUD api powered by FastAPI that relies on JWT and re
 ```bash
 git clone https://github.com/XCarCedo/blog-api.git
 cd blog-api
-bash
+
 pip install uv
 # Skip if uv is already installed
 
