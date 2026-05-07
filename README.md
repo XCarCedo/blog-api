@@ -6,6 +6,7 @@ This is a very simple blog CRUD api powered by FastAPI that relies on JWT and re
 - JWT Authentication
 - Refresh tokens
 - SQLModel for database queries
+- settings.env file for setting jwt settings
 
 # Setup
 ```bash
